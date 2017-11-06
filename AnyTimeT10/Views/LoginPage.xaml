@@ -1,0 +1,85 @@
+﻿<Page
+    x:Class="AnyTimeT10.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnyTimeT10.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:AnyTimeT10.Models"
+      xmlns:Behaviors="using:Template10.Behaviors"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+     xmlns:controls="using:Template10.Controls"
+     xmlns:converters="using:AnyTimeT10.Converters"
+     xmlns:vm="using:AnyTimeT10.ViewModels"
+   
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:LoginPageViewModel x:Name="ViewModel" />
+    </Page.DataContext>
+
+    <Page.Resources>
+        <converters:FileNameToUriConverter
+    x:Key="FileNameToUriConverter"/>
+    </Page.Resources>
+
+    <RelativePanel x:Name="relativePanel" >
+        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True" Text="Choose your profile">
+        </controls:PageHeader>
+
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RelativePanel.Below="{Binding ElementName=pageHeader}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="125" />
+                <RowDefinition Height="125" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="150" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" x:Name="pageTitle" FontSize="90" HorizontalAlignment="Center">Welcome to AnyTime</TextBlock>
+            <TextBlock  Grid.Row="1" x:Name="pageCaption" FontSize="60" Foreground="#FF767373" HorizontalAlignment="Center" >Choose your profile</TextBlock>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"  Grid.Row="2" x:Name="userList"    HorizontalAlignment="Center" Height="200" VerticalScrollBarVisibility="Hidden" Margin="0" Padding="0">
+                <ListView x:Name="ListView" ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay}" >
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel HorizontalAlignment="Left" Orientation="Horizontal" AreScrollSnapPointsRegular="True" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:User">
+                            <Grid Width="160" Height="200">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="4*" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <Canvas Grid.Row="0" x:Name="canvas">
+                                    <Image x:Name="ContentImage" Grid.Column="0" Width="160" Height="160" Source="{Binding AvatarFilename, Converter={StaticResource FileNameToUriConverter}}" />
+                                    <Button Grid.Column="0" Width="50" Height="50"  Command="{Binding DataContext.RemoveCommand, ElementName=relativePanel}" CommandParameter="{x:Bind}" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Image x:Name="ButtonImage" Source="ms-appx:///Assets/UI/removeButton.png" />
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Canvas>
+                                <Viewbox Grid.Row="1">
+                                    <TextBlock x:Name="ItemLabel" Text="{Binding Name}">Placeholder text</TextBlock>
+                                </Viewbox>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center"  Grid.Row="3">
+                <Button x:Name="RegisterButton"    Command="{Binding RegisterCommand}" CommandParameter="{x:Bind}"  FontSize="48" Width="200" HorizontalAlignment="Center" Margin="0,0,10,0">Register</Button>
+                <Button x:Name="LoginButton"    Command="{Binding LoginCommand}" CommandParameter="{x:Bind}"  FontSize="48" Width="200" HorizontalAlignment="Center" Margin="10,0,0,0">Login</Button>
+            </StackPanel>
+            <Popup>
+                <Grid Background="#FFE5E5E5" Height="100" Width="100"/>
+            </Popup>
+
+        </Grid>
+    </RelativePanel>
+</Page>

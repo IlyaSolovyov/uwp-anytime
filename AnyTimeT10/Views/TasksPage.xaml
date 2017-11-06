@@ -1,0 +1,141 @@
+﻿<Page
+    x:Class="AnyTimeT10.Views.TasksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnyTimeT10.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:converters="using:AnyTimeT10.Converters"
+    xmlns:models="using:AnyTimeT10.Models"
+    xmlns:vm="using:AnyTimeT10.ViewModels"
+    >
+    <Page.Resources>
+        <converters:DateTimeToDateTimeOffsetConverter
+    x:Key="DateTimeToDateTimeOffsetConverter"/>
+        <converters:HexToColorConverter
+    x:Key="HexToColorConverter"/>
+        <converters:DateTimeToVisibilityConverter
+    x:Key="DateTimeToVisibilityConverter"/>
+        <converters:DateTimeToOnlyDateStringConverter
+            x:Key="DateTimeToOnlyDateStringConverter"/>
+    </Page.Resources>
+    
+    <Page.DataContext>
+        <vm:TasksPageViewModel x:Name="ViewModel" />
+    </Page.DataContext>
+
+    <RelativePanel x:Name="relativePanel" >
+        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True" Text="Choose your profile">
+        </controls:PageHeader>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RelativePanel.Below="{Binding ElementName=pageHeader}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignLeftWithPanel="True" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Padding="50,0,50,25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="4*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock  >Tasks</TextBlock>
+                    </Viewbox>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center">Sort by:</TextBlock>
+                            <ComboBox SelectedItem="{x:Bind ViewModel.SortByParameter, Mode=TwoWay}" VerticalAlignment="Center">
+                                <x:String>Date added</x:String>
+                                <x:String>Category</x:String>
+                                <x:String>Deadline</x:String>
+                            </ComboBox>
+                        </StackPanel>
+
+                </Grid>
+                <GridView ItemsSource="{x:Bind ViewModel.Tasks }" SelectedItem="{x:Bind ViewModel.SelectedTask, Mode=TwoWay}" Grid.Row="1" HorizontalAlignment="Center">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:DailyTask">
+                            <Grid Height="150" Width="300" Background="{x:Bind Category.ColorCode, Converter={StaticResource HexToColorConverter}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="3*"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="4*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Viewbox Grid.Column="0" Margin="0,0,10,0" >
+                                        <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Category.Icon}"/>
+                                    </Viewbox>
+                                    <TextBlock Foreground="White" Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Name}"  VerticalAlignment="Center" FontSize="16" ></TextBlock>
+                                </Grid>
+                                <Grid Grid.Row="1" Margin="5" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="4*"/>
+                                        <RowDefinition Height="2*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Foreground="White" Grid.Row="0" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text ="{x:Bind Description}" FontSize="13"></TextBlock>
+                                    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,5,0,0" >
+                                        <TextBlock Foreground="White" FontSize="13" Text="Deadline:" Visibility="{x:Bind Deadline, Converter={StaticResource DateTimeToVisibilityConverter}}" Margin="0,0,3,0"></TextBlock>
+                                        <TextBlock Foreground="White" FontSize="13" HorizontalAlignment="Right" Text="{x:Bind Deadline, Converter={StaticResource DateTimeToOnlyDateStringConverter}}" ></TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Grid>
+            <Grid Grid.Column="1"  Padding="10" Background="#FFDCDBDB" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="6*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Row="0">
+                    <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SidepanelLabel}" ></TextBlock>
+                </Viewbox>
+                <Viewbox Grid.Row="1" >
+                    <RelativePanel x:Name="FormPanel" >
+                        <TextBlock x:Name="NameLabel" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" FontSize="18"  >Name</TextBlock>
+                        <TextBox x:Name="NameTextbox" TextWrapping="Wrap" Text="{Binding TaskName, Mode=TwoWay}" RelativePanel.Below="{Binding ElementName=NameLabel}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Margin="0,0,0,5" Height="32"></TextBox>
+                        <TextBlock x:Name="DescriptionLabel" RelativePanel.Below="{Binding ElementName=NameTextbox}" RelativePanel.AlignHorizontalCenterWithPanel="True" FontSize="18" Margin="0,5,0,0" >Description</TextBlock>
+                        <TextBox x:Name="DescriptionTextbox" TextWrapping="Wrap" Text="{Binding TemporaryTask.Description, Mode=TwoWay}"  RelativePanel.Below="{Binding ElementName=DescriptionLabel}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Height="64" Margin="0,0,0,5"></TextBox>
+                        <Grid x:Name="CategoryGrid" VerticalAlignment="Center" RelativePanel.Below="{Binding ElementName=DescriptionTextbox}" Margin="0,5" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center">Category</TextBlock>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding TaskCategory, Mode=TwoWay}" HorizontalAlignment="Right" Margin="5,0,0,0"  VerticalAlignment="Center"></ComboBox>
+                        </Grid>
+                        <Grid x:Name="DeadlineGrid"  RelativePanel.Below="{Binding ElementName=CategoryGrid}" Margin="0,10" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <ToggleSwitch Grid.Column="0" x:Name="DeadlineToggle" OffContent="Deadline off" OnContent="Deadine on" FontSize="16"  ></ToggleSwitch>
+                            <CalendarDatePicker Grid.Column="1"  x:Name="DeadlineCalendar" Date="{Binding TemporaryTask.Deadline, Converter={StaticResource DateTimeToDateTimeOffsetConverter}, Mode=TwoWay}" IsEnabled="{Binding IsOn, ElementName=DeadlineToggle}" MinDate="{Binding TodayDate, Converter={StaticResource DateTimeToDateTimeOffsetConverter}, Mode=TwoWay}" FirstDayOfWeek="Monday" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
+                        </Grid>
+                        <Button x:Name="UpdateButton" Command="{Binding UpdateTaskListCommand}" CommandParameter="{x:Bind}" Content="{Binding SidepanelButtonText}" RelativePanel.Below="{Binding ElementName=DeadlineGrid}" HorizontalAlignment="Stretch" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignLeftWithPanel="True" Height="75"/>
+                    </RelativePanel>
+                </Viewbox>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0"  x:Name="EditButton" Command="{x:Bind ViewModel.ChangeModeCommand}" CommandParameter="{x:Bind}"  HorizontalAlignment="Stretch" Margin="0,5" Height="75" Content="{x:Bind ViewModel.ChangeModeButtonText, Mode=TwoWay}" ></Button>
+                    <Button  Grid.Row="1" x:Name="RemoveButton" Command="{x:Bind ViewModel.RemoveCommand}" CommandParameter="{x:Bind}"  HorizontalAlignment="Stretch" Margin="0,5" Height="75" >Remove task</Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </RelativePanel>
+</Page>
